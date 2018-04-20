@@ -1,24 +1,30 @@
 #!/usr/bin/python3
 
 from telethon import TelegramClient
+from raven import Client
 from config import config
 import os
 import json
 
 
-curwd = os.path.dirname(os.path.realpath(__file__))
-client = TelegramClient(os.path.abspath(curwd + '/telethon.session'), config.get('api_id'), config.get('api_hash'))
-client.start()
+rv_client = Client(config.get('raven_url'))
 
-sent_ids = json.load(open(curwd + '/sent.json', 'r'))
+try:
+    curwd = os.path.dirname(os.path.realpath(__file__))
+    client = TelegramClient(os.path.abspath(curwd + '/telethon.session'), config.get('api_id'), config.get('api_hash'))
+    client.start()
 
-msg_from = client.get_messages(config.get('channel_from'))
-msg_to = client.get_messages(config.get('channel_from'))
+    sent_ids = json.load(open(curwd + '/sent.json', 'r'))
 
-for message in msg_from:
-    if 'Запорізька' in message.message:
-        if message.id not in sent_ids:
-            sent_ids.append(message.id)
-            client.forward_messages(config.get('channel_to'), message)
+    msg_from = client.get_messages(config.get('channel_from'))
+    msg_to = client.get_messages(config.get('channel_from'))
 
-json.dump(sent_ids, open(curwd + '/sent.json', 'w'))
+    for message in msg_from:
+        if 'Запорізька' in message.message:
+            if message.id not in sent_ids:
+                sent_ids.append(message.id)
+                client.forward_messages(config.get('channel_to'), message)
+
+    json.dump(sent_ids, open(curwd + '/sent.json', 'w'))
+except Exception:
+    rv_client.captureException()
