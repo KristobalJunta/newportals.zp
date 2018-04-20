@@ -5,10 +5,12 @@ from config import config
 import os
 import json
 
-client = TelegramClient(os.path.abspath('telethon.session'), config.get('api_id'), config.get('api_hash'))
+
+curwd = os.path.dirname(os.path.realpath(__file__))
+client = TelegramClient(os.path.abspath(curwd + '/telethon.session'), config.get('api_id'), config.get('api_hash'))
 client.start()
 
-sent_ids = json.load(open('sent.json', 'r'))
+sent_ids = json.load(open(curwd + '/sent.json', 'r'))
 
 msg_from = client.get_messages(config.get('channel_from'))
 msg_to = client.get_messages(config.get('channel_from'))
@@ -19,4 +21,4 @@ for message in msg_from:
             sent_ids.append(message.id)
             client.forward_messages(config.get('channel_to'), message)
 
-json.dump(sent_ids, open('sent.json', 'w'))
+json.dump(sent_ids, open(curwd + '/sent.json', 'w'))
