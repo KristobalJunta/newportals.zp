@@ -2,12 +2,13 @@
 
 from telethon import TelegramClient
 from raven import Client
+from raven.transport.http import HTTPTransport
 from config import config
 import os
 import json
 
 
-rv_client = Client('sync+' + config.get('raven_url'))
+rv_client = Client(config.get('raven_url'), transport=HTTPTransport)
 
 try:
     curwd = os.path.dirname(os.path.realpath(__file__))
