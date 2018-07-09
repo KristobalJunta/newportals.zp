@@ -7,11 +7,15 @@ import os
 import json
 
 
-rv_client = Client(config.get('raven_url'))
+rv_client = Client('sync+' + config.get('raven_url'))
 
 try:
     curwd = os.path.dirname(os.path.realpath(__file__))
-    client = TelegramClient(os.path.abspath(curwd + '/telethon.session'), config.get('api_id'), config.get('api_hash'))
+    client = TelegramClient(
+        os.path.abspath(curwd + '/telethon.session'),
+        config.get('api_id'),
+        config.get('api_hash')
+    )
     client.start()
 
     sent_ids = json.load(open(curwd + '/sent.json', 'r'))
