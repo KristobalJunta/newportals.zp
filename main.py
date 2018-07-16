@@ -25,7 +25,7 @@ try:
     msg_to = client.get_messages(config.get('channel_from'))
 
     for message in msg_from:
-        if 'Запорізька' in message.message:
+        if config.get('search') in message.message:
             if message.id not in sent_ids:
                 sent_ids.append(message.id)
                 client.forward_messages(config.get('channel_to'), message)
