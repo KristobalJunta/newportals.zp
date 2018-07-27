@@ -25,7 +25,15 @@ try:
     msg_to = client.get_messages(config.get('channel_from'))
 
     for message in msg_from:
-        if config.get('search') in message.message:
+        search = config.get('search')
+        found = False
+        if type(search) == list:
+            for term in search:
+                found = found or term in message.message
+        else:
+            found = search in message.message
+
+        if found:
             if message.id not in sent_ids:
                 sent_ids.append(message.id)
                 client.forward_messages(config.get('channel_to'), message)
